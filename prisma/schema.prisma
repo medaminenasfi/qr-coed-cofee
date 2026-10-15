@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  SERVER
+  KITCHEN
+  BAR
+}
+
+enum OrderStatus {
+  NEW
+  CONFIRMED
+  PREPARING
+  READY
+  SERVED
+  CANCELLED
+}
+
+enum TableStatus {
+  FREE
+  OCCUPIED
+  BILL_REQUESTED
+}
+
+enum RequestType {
+  WAITER
+  BILL
+}
+
+enum RequestStatus {
+  OPEN
+  DONE
+}
+
+model Staff {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(SERVER)
+  active       Boolean  @default(true)
+  createdAt    DateTime @default(now())
+}
+
+model DiningTable {
+  id        String      @id @default(cuid())
+  number    Int         @unique
+  qrToken   String      @unique @default(cuid())
+  status    TableStatus @default(FREE)
+  orders    Order[]
+  requests  GuestRequest[]
+  createdAt DateTime    @default(now())
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String
+  nameFr    String?
+  nameAr    String?
+  sortOrder Int        @default(0)
+  items     MenuItem[]
+}
+
+model MenuItem {
+  id          String      @id @default(cuid())
+  name        String
+  description String      @default("")
+  price       Decimal     @db.Decimal(10, 3)
+  imageUrl    String?
+  available   Boolean     @default(true)
+  station     String      @default("KITCHEN")
+  categoryId  String
+  category    Category    @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
+  createdAt   DateTime    @default(now())
+}
+
+model Order {
+  id        String      @id @default(cuid())
+  tableId   String
+  table     DiningTable @relation(fields: [tableId], references: [id])
+  status    OrderStatus @default(NEW)
+  total     Decimal     @db.Decimal(10, 3)
+  notes     String?
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId String
+  menuItem  MenuItem @relation(fields: [menuItemId], references: [id])
+  name      String
+  quantity  Int
+  unitPrice Decimal  @db.Decimal(10, 3)
+  notes     String?
+  status    OrderStatus @default(NEW)
+}
+
+model GuestRequest {
+  id        String        @id @default(cuid())
+  tableId   String
+  table     DiningTable   @relation(fields: [tableId], references: [id])
+  type      RequestType
+  status    RequestStatus @default(OPEN)
+  createdAt DateTime      @default(now())
+}

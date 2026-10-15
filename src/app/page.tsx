@@ -1,0 +1,11 @@
+import Link from "next/link";
+import { ArrowUpRight, Coffee, ChefHat, QrCode, ShieldCheck } from "lucide-react";
+export default function Home() {
+ return <main className="shell">
+  <header className="topbar"><div className="brand">sage<span>&</span>stone.</div><Link href="/staff/login" className="btn btn-light" style={{textDecoration:"none"}}>Staff sign in <ArrowUpRight size={16} style={{display:"inline",verticalAlign:"middle"}}/></Link></header>
+  <section className="hero"><div className="eyebrow" style={{color:"#d7f36a"}}>THE TABLE, REIMAGINED</div><h1 className="serif">Good food.<br/>No waiting around.</h1><p>Scan. Explore. Order. Enjoy your time — we’ll take care of the rest. A modern digital menu for the way you want to dine.</p><div style={{display:"flex",gap:10,flexWrap:"wrap",marginTop:22}}><Link href="/menu?table=1" className="btn btn-lime" style={{textDecoration:"none"}}>Explore the menu <ArrowUpRight size={16} style={{display:"inline",verticalAlign:"middle"}}/></Link><Link href="/staff/login" className="btn btn-light" style={{textDecoration:"none"}}>Staff dashboard</Link></div></section>
+  <section style={{marginTop:32}}><div className="eyebrow">BUILT FOR HOSPITALITY</div><h2 className="serif" style={{fontSize:32,margin:"8px 0 20px"}}>Every detail, considered.</h2><div className="grid">
+   {[{icon:QrCode,title:"Scan & order",desc:"A mobile-first menu opens instantly from a table QR code."},{icon:ChefHat,title:"Kitchen in sync",desc:"Staff can track new orders and update preparation status."},{icon:ShieldCheck,title:"Role-based access",desc:"Separate staff and admin access, backed by PostgreSQL."}].map(x=><article className="panel" key={x.title}><div style={{background:"#edf3e7",width:44,height:44,borderRadius:13,display:"grid",placeItems:"center"}}><x.icon size={22}/></div><h3 style={{margin:"16px 0 7px"}}>{x.title}</h3><p className="muted" style={{fontSize:14,lineHeight:1.65,margin:0}}>{x.desc}</p></article>)}
+  </div></section><footer className="muted" style={{fontSize:12,padding:"32px 0 10px"}}>Demo project · Sage & Stone · Built for a better service flow</footer>
+ </main>;
+}
